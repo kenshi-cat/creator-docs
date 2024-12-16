@@ -1,3 +1,41 @@
+-- Script: Invisibilidade e atravessar paredes
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local invisible = false  -- Estado inicial do jogador (visível e colidindo)
+local toggleKey = Enum.KeyCode.E  -- Tecla para ativar/desativar
+
+-- Função para alternar invisibilidade e atravessar paredes
+local function toggleGhostMode()
+    if character and humanoidRootPart then
+        invisible = not invisible  -- Alterna entre os estados
+        
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                -- Torna o personagem invisível e desativa colisões
+                part.Transparency = invisible and 1 or 0
+                part.CanCollide = not invisible  -- Atravessa paredes quando invisível
+            elseif part:IsA("Decal") then
+                part.Transparency = invisible and 1 or 0  -- Esconde acessórios
+            end
+        end
+        
+        -- Mensagem de feedback no console
+        if invisible then
+            print("Modo fantasma ativado!")
+        else
+            print("Modo fantasma desativado!")
+        end
+    end
+end
+
+-- Detecta a tecla pressionada
+game:GetService("UserInputService").InputBegan:Connect(function(input, isProcessed)
+    if isProcessed then return end
+    if input.KeyCode == toggleKey then
+        toggleGhostMode()
+    end
+end)
 name: 'Stale'
 on:
   schedule:
